@@ -5,6 +5,11 @@
 
 <PageTitle>Students</PageTitle>
 
+@if (_showingDeleteModal)
+{
+    <ModalDelete studentToDelete="_studentToDelete" OnClickButtonClose="(isDeleted)=> CloseDeleteModal(isDeleted)"></ModalDelete>
+}
+
 <div class="mx-4 px-4">
     <div class="row">
         <div class="col-md-6">
@@ -46,7 +51,7 @@
                             <button class="btn btn-warning w-100 mb-2">
                                 Update
                             </button>
-                            <button class="btn btn-danger w-100 mb-2">
+                            <button @onclick="() => OpenDeleteModal(student)" class="btn btn-danger w-100 mb-2">
                                 Delete
                             </button>
                         </td>
@@ -66,8 +71,6 @@
     protected HttpClient HttpClient {get; set;}
 
     private List<GetStudentVM>? _students = null;
-
-    private bool _showingCreateModal = false;
 
     private bool _showingDeleteModal = false;
 
@@ -93,17 +96,15 @@
         _showingDeleteModal = true;
     }
 
-    private void CloseDeleteModal(GetStudentVM studentToDelete)
+    private void CloseDeleteModal(bool isDeleted)
     {
-        if (studentToDelete != null)
+        if (isDeleted && _studentToDelete != null)
         {
-            GetStudentVM onDeleteStudentInList = _students?.FirstOrDefault(student => student.RollNo == studentToDelete.RollNo);
-
-            if(onDeleteStudentInList != null)
-            {
-                
-            }
+            _students?.Remove(_studentToDelete);
         }
+
+        _studentToDelete = null;
+        _showingDeleteModal = false;
     }
 }
 
