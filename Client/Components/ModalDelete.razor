@@ -1,0 +1,50 @@
+﻿
+<div class="modal fade show d-block bg-half-black" id="staticBackdrop" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Delete Student</h1>
+                <button type="button" @onclick="()=> OnClickButtonClose.InvokeAsync(false)" class="btn-close"  aria-label="Close"></button>
+            </div>
+            @if(studentToDelete != null)
+            {
+                <div class="modal-body">
+                    <h1>Are you sure, you want to delete student: @studentToDelete.FirstName @studentToDelete.LastName?</h1>
+                </div>
+                <div class="modal-footer">
+                    <button @onclick="()=> OnClickButtonClose.InvokeAsync(false)" type="button" class="btn btn-secondary">Close</button>
+                    <button @onclick="DeleteStudentAsync" type="button" class="btn btn-danger">Delete</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public EventCallback<bool> OnClickButtonClose { get; set; }
+
+    [Parameter]
+    public GetStudentVM? studentToDelete { get; set; } = null;
+
+    #pragma warning disable CS8616
+    [Inject]
+    protected HttpClient HttpClient { get; set; }
+
+    [Inject]
+    protected IJSRuntime JSRuntime { get; set; }
+
+    private async Task DeleteStudentAsync()
+    {
+        HttpResponseMessage response = await HttpClient.DeleteAsync(APIEndPoints.DeleteStudentUrl(studentToDelete.RollNo));
+        if (response.IsSuccessStatusCode)
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "student deleted successfully");
+            await OnClickButtonClose.InvokeAsync(true);
+        }
+        else
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "student delete failed");
+        }
+    }
+}

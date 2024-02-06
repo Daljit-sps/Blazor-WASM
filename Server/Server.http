@@ -1,0 +1,19 @@
+@Server_HostAddress = http://localhost:5267
+
+GET {{Server_HostAddress}}/students/
+Accept: application/json
+
+###
+GET {{Server_HostAddress}}/student/2
+Accept: application/json
+
+###
+POST {{Server_HostAddress}}/login/ 
+Content-Type: application/json
+
+{
+  "email":"admin@gmail.com",
+  "password":"1234"
+}
+
+###

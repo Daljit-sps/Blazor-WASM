@@ -1,0 +1,109 @@
+﻿@page "/"
+@using Client.Components
+@inject NavigationManager NavigationManager
+
+
+<PageTitle>Students</PageTitle>
+
+<div class="mx-4 px-4">
+    <div class="row">
+        <div class="col-md-6">
+            <h1>Students</h1>
+        </div>
+        <div class="col-md-6 text-end">
+            <button @onclick="NavigateToAddEditUser" class="btn btn-success mb-3">Add Student</button>
+        </div>
+        <hr />
+    </div>
+</div>
+
+<div class="table-responsive mx-4 px-2">
+    <table class="table table-bordered table-light table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Roll No</th>
+                <th scope="col">First Name</th>
+                <th scope="col">Last Name</th>
+                <th scope="col">Email</th>
+                <th scope="col">Degree</th>
+                <th scope="col">Batch</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (_students != null)
+            {
+                @foreach (var student in _students)
+                {
+                    <tr>
+                        <th scope="row">@student.RollNo</th>
+                        <td>@student.FirstName</td>
+                        <td>@student.LastName</td>
+                        <td>@student.Email</td>
+                        <td>@student.Degree</td>
+                        <td>@student.Batch</td>
+                        <td>
+                            <button class="btn btn-warning w-100 mb-2">
+                                Update
+                            </button>
+                            <button class="btn btn-danger w-100 mb-2">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+
+                }
+            }
+           
+        </tbody>
+    </table>
+</div>
+
+
+@code{
+    #pragma warning disable CS8616
+    [Inject]
+    protected HttpClient HttpClient {get; set;}
+
+    private List<GetStudentVM>? _students = null;
+
+    private bool _showingCreateModal = false;
+
+    private bool _showingDeleteModal = false;
+
+    private GetStudentVM? _studentToDelete = null;
+
+    #pragma warning restore CS8616
+    protected override async Task OnInitializedAsync()
+    {
+        _students = await HttpClient.GetFromJsonAsync<List<GetStudentVM>?>(APIEndPoints.GetAllStudentsUrl);
+    }
+
+    private void NavigateToAddEditUser()
+    {
+        // Use navigation manager to navigate to the Add/Edit User page
+        NavigationManager.NavigateTo("/addedituser");
+    }
+
+
+
+    private void OpenDeleteModal(GetStudentVM studentToDelete)
+    {
+        _studentToDelete = studentToDelete;
+        _showingDeleteModal = true;
+    }
+
+    private void CloseDeleteModal(GetStudentVM studentToDelete)
+    {
+        if (studentToDelete != null)
+        {
+            GetStudentVM onDeleteStudentInList = _students?.FirstOrDefault(student => student.RollNo == studentToDelete.RollNo);
+
+            if(onDeleteStudentInList != null)
+            {
+                
+            }
+        }
+    }
+}
+
