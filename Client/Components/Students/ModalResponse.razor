@@ -1,0 +1,39 @@
+﻿<div class="modal fade show d-block backgroundChange" id="staticBackdrop" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                @if (IsSuccess)
+                {
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Success</h1>
+                }
+                else
+                {
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Error</h1>
+                }
+                <button type="button" @onclick="()=> OnClickButtonClose.InvokeAsync(false)" class="btn-close" aria-label="Close"></button>
+            </div>
+            @if (responseMessage != null)
+            {
+                <div class="modal-body">
+                    <h6>@responseMessage</h6>
+                    <div class="float-end mt-2">
+                        <button @onclick="()=> OnClickButtonClose.InvokeAsync(true)" type="button" class="btn btn-primary">Close</button>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public EventCallback<bool> OnClickButtonClose { get; set; }
+
+    [Parameter]
+    public string? responseMessage { get; set; }
+
+    [Parameter]
+    public bool IsSuccess { get; set; }
+
+}

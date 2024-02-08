@@ -50,6 +50,7 @@ namespace Server.API
                     IEnumerable<GetStudentVM> allStudents = students
                     .Select(e => new GetStudentVM
                     {
+                        Id = e.Id,
                         UserId = e.UserId,
                         RollNo = e.RollNo,
                         Degree = e.Degree.DegreeName,
@@ -86,11 +87,14 @@ namespace Server.API
                         FirstName = studentData.User.FirstName,
                         LastName = studentData.User.LastName,
                         Email = studentData.User.Email,
+                        Password = studentData.User.Password,
                         Address = studentData.User.Address,
                         MobileNo = studentData.User.MobileNo,
                         FatherName = studentData.User.FatherName,
                         MotherName = studentData.User.MotherName,
-                        Dob = studentData.User.Dob
+                        Dob = studentData.User.Dob,
+                        DegreeId = studentData.DegreeId,
+                        RoleId = studentData.User.RoleId,
                     };
 
                     return Results.Ok(data);
@@ -171,7 +175,6 @@ namespace Server.API
                         UpdatedOn = DateTime.Now,
                     };
                     var result = await repository.Post<Student>(student);
-                    //return Results.Created($"/student/{student.RollNo}", newStudent);
                     return Results.Ok("Student added succesfully");
                 }
 
@@ -179,7 +182,7 @@ namespace Server.API
             });//.RequireAuthorization();
 
             // Update the Student Data
-            app.MapPut("/student/Update", async (int rollNo, AddUpdateStudentVM student, IGenericRepository repository) =>
+            app.MapPut("/student/Update/{rollNo}", async (int rollNo, AddUpdateStudentVM student, IGenericRepository repository) =>
             {
                 var studentToUpdate = await repository.Get<Student>(x => x.RollNo == rollNo);
 

@@ -51,7 +51,7 @@ namespace Shared.ViewModels
         [Required]
         public int UpdatedBy { get; set; }
 
-
+        public string Degree {  get; set; }
 
     }
 }

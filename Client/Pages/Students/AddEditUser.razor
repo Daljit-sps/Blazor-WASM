@@ -1,0 +1,253 @@
+﻿@page "/addedituser/{rollNo}"
+@using Client.Components.Students
+
+@if (_showingResponseModal)
+{
+    <ModalResponse responseMessage="@Message" IsSuccess="@IsSuccess" OnClickButtonClose="(isClose)=> CloseResponseModal(isClose)"></ModalResponse>
+}
+
+<div class="mx-4 px-4">
+    <div class="row">
+        <div class="col-md-6">
+            @if (EditMode)
+            {
+                <h3>Update Student</h3>
+            }
+            else
+            {
+                <h3>Add Student</h3>
+            }
+        </div>
+        <div class="col-md-6 text-end">
+            <a href="javascript:history.back()" class="btn btn-link">Back</a>
+        </div>
+    </div>
+    <hr />
+</div>
+
+
+
+<EditForm Model="@_student" OnValidSubmit="SubmitForm" class="mx-4 px-4">
+    <DataAnnotationsValidator />
+
+    <div class="mb-3 row">
+        <label class="col-sm-2 col-form-label" for="firstname">First Name:</label>
+        <div class="col-sm-6">
+            <InputText id="firstname" class="form-control" @bind-Value="_student.FirstName" />
+            <ValidationMessage For="@(() => _student.FirstName)" />
+        </div>
+    </div>
+
+    <div class="mb-3 row">
+        <label class="col-sm-2 col-form-label" for="lastname">Last Name:</label>
+        <div class="col-sm-6">
+            <InputText id="lastname" class="form-control" @bind-Value="_student.LastName" />
+            <ValidationMessage For="@(() => _student.LastName)" />
+        </div>
+    </div>
+
+    <div class="mb-3 row">
+        <label class="col-sm-2 col-form-label" for="email">Email:</label>
+        <div class="col-sm-6">
+            <InputText id="email" class="form-control" @bind-Value="_student.Email" />
+            <ValidationMessage For="@(() => _student.Email)" />
+        </div>
+    </div>
+
+    <div class="mb-3 row">
+        <label class="col-sm-2 col-form-label" for="password">Password:</label>
+        <div class="col-sm-6">
+            <InputText id="password" class="form-control" @bind-Value="_student.Password" />
+            <ValidationMessage For="@(() => _student.Password)" />
+        </div>
+    </div>
+
+    <div class="mb-3 row">
+        <label class="col-sm-2 col-form-label" for="mobilNo">Mobile No:</label>
+        <div class="col-sm-6">
+            <InputText id="mobileNo" class="form-control" @bind-Value="_student.MobileNo" />
+            <ValidationMessage For="@(() => _student.MobileNo)" />
+        </div>
+
+    </div>
+
+    <div class="mb-3 row">
+        <label class="col-sm-2 col-form-label" for="address">Address:</label>
+        <div class="col-sm-6">
+            <InputText id="address" class="form-control" @bind-Value="_student.Address" />
+            <ValidationMessage For="@(() => _student.Address)" />
+        </div>
+    </div>
+
+    <div class="mb-3 row">
+        <label class="col-sm-2 col-form-label" for="dob">Date Of Birth:</label>
+        <div class="col-sm-6">
+            <InputDate id="dob" class="form-control" @bind-Value="_student.DOB" />
+            <ValidationMessage For="@(() => _student.DOB)" />
+        </div>
+    </div>
+
+    <div class="mb-3 row">
+        <label class="col-sm-2 col-form-label" for="fatherName">Father Name:</label>
+        <div class="col-sm-6">
+            <InputText id="fatherName" class="form-control" @bind-Value="_student.FatherName" />
+            <ValidationMessage For="@(() => _student.FatherName)" />
+        </div>
+    </div>
+
+    <div class="mb-3 row">
+        <label class="col-sm-2 col-form-label" for="motherName">Mother Name:</label>
+        <div class="col-sm-6">
+            <InputText id="motherName" class="form-control" @bind-Value="_student.MotherName" />
+            <ValidationMessage For="@(() => _student.MotherName)" />
+        </div>
+    </div>
+
+    <div class="mb-3 row">
+        <label class="col-sm-2 col-form-label" for="rollNo">Roll No:</label>
+        <div class="col-sm-6">
+            @if (EditMode)
+            {
+                <InputNumber id="rollNo" class="form-control" disabled="@IsDisabled" @bind-Value="_student.RollNo" />
+            }
+            else
+            {
+                <InputNumber id="rollNo" class="form-control" @bind-Value="_student.RollNo" />
+                <ValidationMessage For="@(() => _student.RollNo)" />
+            }      
+        </div>
+    </div>
+
+    <div class="mb-3 row">
+        <label class="col-sm-2 col-form-label" for="batch">Batch:</label>
+        <div class="col-sm-6">
+            <InputText id="batch" class="form-control" @bind-Value="_student.Batch" />
+            <ValidationMessage For="@(() => _student.Batch)" />
+        </div>
+    </div>
+
+    <div class="mb-3 row">
+        <label class="col-sm-2 col-form-label" for="Degree">Degree:</label>
+        <div class="col-sm-6">
+            <InputSelect id="degreeId" class="form-select" @bind-Value="_student.DegreeId">
+                <option value="">Select Degree</option>
+                @foreach (var degree in _degrees)
+                {
+                    <option value="@degree.Id">@degree.DegreeName</option>
+                }
+            </InputSelect>
+            <ValidationMessage For="@(() => _student.DegreeId)" />
+        </div>
+    </div>
+
+    <div class="mb-3 row">
+        <div class="col-sm-10 offset-sm-2">
+            @if (EditMode)
+            {
+                <button type="submit" class="btn btn-primary w-50 ms-4" >Update</button>
+            }
+            else
+            {
+                <button type="submit" class="btn btn-primary w-50 ms-4" >Save</button>
+            }
+        </div>
+    </div>
+
+</EditForm>
+
+
+
+@code {
+    [Inject]
+    protected HttpClient HttpClient { get; set; }
+
+    private bool _showingResponseModal = false;
+
+    private bool IsSuccess = false;
+
+    private string? Message { get; set; }
+
+    [Parameter]
+    public string rollNo { get; set; }
+
+    private AddUpdateStudentVM _student = new AddUpdateStudentVM();
+    private GetStudentVM? getStudent = new GetStudentVM();
+
+    private List<RolesVM>? _roles = new();
+    private List<DegreeVM>? _degrees = new();
+    private bool EditMode = false;
+    protected bool IsDisabled = false;
+
+
+    #pragma warning restore CS8616
+    protected override async Task OnInitializedAsync()
+    {
+        if(rollNo != "0")
+        {   
+            getStudent = await HttpClient.GetFromJsonAsync<GetStudentVM>(APIEndPoints.GetStudentByIdUrl(int.Parse(rollNo)));
+            if(getStudent != null)
+            {
+                _student.RollNo = getStudent.RollNo;
+                _student.Degree = getStudent.Degree;
+                _student.DegreeId = getStudent.DegreeId;
+                _student.Batch = getStudent.Batch;
+                _student.FirstName = getStudent.FirstName;
+                _student.LastName = getStudent.LastName;
+                _student.Email = getStudent.Email;
+                _student.Address = getStudent.Address;
+                _student.MobileNo = getStudent.MobileNo;
+                _student.FatherName = getStudent.FatherName;
+                _student.MotherName = getStudent.MotherName;
+                _student.DOB = getStudent.Dob;
+                _student.RoleId = getStudent.RoleId;
+                _student.Password = getStudent.Password;
+                EditMode = true;
+                IsDisabled = true;
+            }
+        }
+
+        _degrees = await HttpClient.GetFromJsonAsync<List<DegreeVM>?>(APIEndPoints.GetAllDegreesUrl);
+    }
+
+    private async Task SubmitForm()
+    {
+        if (EditMode)
+        {
+            HttpResponseMessage response = await HttpClient.PutAsJsonAsync(APIEndPoints.UpdateStudentUrl(_student.RollNo), _student);
+            _showingResponseModal = true;
+            if (response.IsSuccessStatusCode)
+            {
+                IsSuccess = true;
+                Message = "Student updated successfully!";
+            }
+            else
+            {
+                IsSuccess = false;
+                Message = "Something went wrong!";
+            }
+        }
+        else
+        {
+            _student.RoleId = 3;
+            HttpResponseMessage response = await HttpClient.PostAsJsonAsync(APIEndPoints.AddStudentUrl, _student);
+            _showingResponseModal = true;
+            if (response.IsSuccessStatusCode)
+            {
+                // Clear the form fields
+                _student = new AddUpdateStudentVM();
+                StateHasChanged();
+                Message = "Student added successfully!";
+            }
+            else
+            {
+                Message = "Something went wrong!";
+            }
+        }
+    }
+
+    private void CloseResponseModal(bool isClose)
+    {
+        Message = null;
+        _showingResponseModal = false;
+    }
+}

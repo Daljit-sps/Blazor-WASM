@@ -1,5 +1,5 @@
 ﻿@page "/"
-@using Client.Components
+@using Client.Components.Students
 @inject NavigationManager NavigationManager
 
 
@@ -16,7 +16,7 @@
             <h1>Students</h1>
         </div>
         <div class="col-md-6 text-end">
-            <button @onclick="NavigateToAddEditUser" class="btn btn-success mb-3">Add Student</button>
+            <button @onclick="() => NavigateToAddEditUser(0)" class="btn btn-success mb-3">Add Student</button>
         </div>
         <hr />
     </div>
@@ -48,7 +48,10 @@
                         <td>@student.Degree</td>
                         <td>@student.Batch</td>
                         <td>
-                            <button class="btn btn-warning w-100 mb-2">
+                            <button @onclick="() => NavigateToViewStudentDetails(student.RollNo)" class="btn btn-primary w-100 mb-2">
+                                View
+                            </button>
+                            <button @onclick="() => NavigateToAddEditUser(student.RollNo)" class="btn btn-warning w-100 mb-2">
                                 Update
                             </button>
                             <button @onclick="() => OpenDeleteModal(student)" class="btn btn-danger w-100 mb-2">
@@ -82,12 +85,17 @@
         _students = await HttpClient.GetFromJsonAsync<List<GetStudentVM>?>(APIEndPoints.GetAllStudentsUrl);
     }
 
-    private void NavigateToAddEditUser()
+    private void NavigateToAddEditUser(int rollNo)
     {
         // Use navigation manager to navigate to the Add/Edit User page
-        NavigationManager.NavigateTo("/addedituser");
+        NavigationManager.NavigateTo($"/addedituser/{rollNo}");
     }
 
+    private void NavigateToViewStudentDetails(int rollNo)
+    {
+        // Use navigation manager to navigate to the Details page
+        NavigationManager.NavigateTo($"/studentDetails/{rollNo}");
+    }
 
 
     private void OpenDeleteModal(GetStudentVM studentToDelete)

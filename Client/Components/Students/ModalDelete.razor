@@ -1,5 +1,5 @@
 ﻿
-<div class="modal fade show d-block bg-half-black" id="staticBackdrop" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal fade show d-block backgroundChange" id="staticBackdrop" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -9,11 +9,11 @@
             @if(studentToDelete != null)
             {
                 <div class="modal-body">
-                    <h1>Are you sure, you want to delete student: @studentToDelete.FirstName @studentToDelete.LastName?</h1>
-                </div>
-                <div class="modal-footer">
-                    <button @onclick="()=> OnClickButtonClose.InvokeAsync(false)" type="button" class="btn btn-secondary">Close</button>
-                    <button @onclick="DeleteStudentAsync" type="button" class="btn btn-danger">Delete</button>
+                    <h6>Are you sure, you want to delete student: @studentToDelete.FirstName @studentToDelete.LastName?</h6>
+                    <div class="float-end mt-2">
+                        <button @onclick="()=> OnClickButtonClose.InvokeAsync(false)" type="button" class="btn btn-secondary">Close</button>
+                        <button @onclick="DeleteStudentAsync" type="button" class="btn btn-danger">Delete</button>
+                    </div>
                 </div>
             }
         </div>
@@ -26,6 +26,10 @@
 
     [Parameter]
     public GetStudentVM? studentToDelete { get; set; } = null;
+
+    private bool _showingResponseModal = false;
+
+    private string? Message { get; set; }
 
     #pragma warning disable CS8616
     [Inject]
