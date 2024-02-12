@@ -1,18 +1,77 @@
 ﻿@inherits LayoutComponentBase
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+
 <div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+    @if (isAuthenticated)
+    {
+        <div class="sidebar">
+            <NavMenu />
+        </div>
+    }
 
     <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-        </div>
-
+        @if (isAuthenticated)
+        {
+            <div class="top-row px-4 top-bar">
+                <h6>Welcome, @userName</h6>
+                <button class="btn btn-primary ms-4" @onclick="Logout">Logout</button>
+            </div>
+           
+        }
         <div class="row justify-content-center align-items-center">
             <div class="col bg-light p-4">
-                @Body
+                <CascadingValue Value="ChangeMainLayout">@Body</CascadingValue>
             </div>
         </div>
     </main>
 </div>
+
+    @code {
+    public string? userName { get; set; }
+    public bool isAuthenticated { get; set; }
+
+    [Inject]
+    public IAuthenticationService AuthenticationService { get; set; }
+
+    [Inject]
+    public NavigationManager NavigationManager { get; set; }
+
+    [Inject]
+    protected AuthenticationStateProvider AuthenticationStateProvider { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        isAuthenticated = user.Identity.IsAuthenticated;
+        ChangeMainLayout(isAuthenticated);
+    }
+
+
+    private async void ChangeMainLayout(bool isUserLoggedIn)
+    {
+
+        isAuthenticated = isUserLoggedIn;
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        isAuthenticated = user.Identity.IsAuthenticated;
+        if (isAuthenticated)
+        {
+            userName = user.FindFirst("Name")?.Value;
+        }
+        else
+        {
+            userName = null;
+        }
+        StateHasChanged();
+    }
+
+
+    private async Task Logout()
+    {
+        NavigationManager.NavigateTo("/Logout");
+    }
+
+}

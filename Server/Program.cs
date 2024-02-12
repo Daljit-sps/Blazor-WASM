@@ -30,15 +30,15 @@ builder.Services.AddCors(setupAction: options =>
 
 
 // Adding Authentication  
-/*builder.Services.AddAuthentication(options =>
+builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-})*/
+})
 
 // Adding Jwt Bearer  
-/*.AddJwtBearer(options =>
+.AddJwtBearer(options =>
 {
     options.SaveToken = true;
     //options.RequireHttpsMetadata = false;
@@ -50,14 +50,14 @@ builder.Services.AddCors(setupAction: options =>
         ValidIssuer = configuration["JWT:ValidIssuer"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]))
     };
-});*/
+});
 
 
-//builder.Services.AddAuthorization();
+builder.Services.AddAuthorization();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-/*builder.Services.AddSwaggerGen(c =>
+builder.Services.AddSwaggerGen(c =>
 {
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
@@ -84,7 +84,7 @@ builder.Services.AddSwaggerGen();
             new string[] { }
         }
     });
-});*/
+});
 
 var app = builder.Build();
 
@@ -92,8 +92,8 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
-    /*app.UseSwaggerUI(options =>
+    //app.UseSwaggerUI();
+    app.UseSwaggerUI(options =>
     {
         options.DefaultModelRendering(Swashbuckle.AspNetCore.SwaggerUI.ModelRendering.Example);
         options.DefaultModelExpandDepth(0);
@@ -105,14 +105,14 @@ if (app.Environment.IsDevelopment())
 
         options.ConfigObject.AdditionalItems["token"] = "Bearer ";
         options.ConfigObject.AdditionalItems["AuthorizationKeyName"] = "Authorization";
-    });*/
+    });
 }
 app.UseCors();
 app.UseHttpsRedirection();
 
 
-//app.UseAuthentication();
-//app.UseAuthorization();
+app.UseAuthentication();
+app.UseAuthorization();
 
 // Map all the API End points
 app.MapMethodsUsingGenericRepositoryRoutes();

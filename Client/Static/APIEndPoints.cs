@@ -15,6 +15,8 @@
 
         public const string AddStudentUrl = $"{ServerBaseUrl}/student/Add";
 
+        public const string LoginUrl = $"{ServerBaseUrl}/login";
+
         public static string UpdateStudentUrl(int rollNo) => $"{ServerBaseUrl}/student/Update/{rollNo}";
 
         public static string GetStudentByIdUrl(int rollNo) => $"{ServerBaseUrl}/student/{rollNo}";

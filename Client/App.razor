@@ -1,12 +1,28 @@
 ﻿<Router AppAssembly="@typeof(App).Assembly">
     <Found Context="routeData">
-        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
-        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+        <Microsoft.AspNetCore.Components.Authorization.AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+            <NotAuthorized>
+                @if (!context.User.Identity.IsAuthenticated)
+                {
+                    Navigation.NavigateTo("/");
+                }
+                else
+                {
+                    Navigation.NavigateTo("/student");
+                }
+            </NotAuthorized>
+
+        </Microsoft.AspNetCore.Components.Authorization.AuthorizeRouteView>
     </Found>
     <NotFound>
-        <PageTitle>Not found</PageTitle>
         <LayoutView Layout="@typeof(MainLayout)">
-            <p role="alert">Sorry, there's nothing at this address.</p>
+            <p>Sorry, there's nothing at this address.</p>
         </LayoutView>
     </NotFound>
 </Router>
+
+
+@code {
+    [Inject] NavigationManager Navigation { get; set; }
+   
+}

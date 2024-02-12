@@ -25,18 +25,18 @@ namespace Server.API
         {
             //-----------------------------Login------------------------------------------
 
-           /* app.MapPost("/login", async ([FromBody] LoginVM login, IGenericRepository repository) =>
+            app.MapPost("/login", async ([FromBody] LoginVM login, IGenericRepository repository) =>
             {
                 var user = await Authenticate(login, repository);
-
                 if (user != null)
                 {
                     var token = GenerateToken(user, _configuration);
-                    return Results.Ok(new { Token = token });
+                    //return Results.Ok(new { Token = token });
+                    return Results.Ok(new LoginResultVM { Token = token });
                 }
                 return Results.Unauthorized();
             });
-*/
+
 
             //------------------------------Students----------------------------------------
 
@@ -69,7 +69,7 @@ namespace Server.API
                 }
 
                 return Results.NotFound("No students added");
-            });
+            }).RequireAuthorization();
 
             // Get Student by Roll No.
             app.MapGet("/student/{rollNo}", async (int rollNo, IGenericRepository repository) =>
@@ -101,7 +101,7 @@ namespace Server.API
                 }
 
                 return Results.NotFound("No Student found with this Roll No.");
-            });
+            }).RequireAuthorization();
 
             // Get All Students with Pagination
             app.MapGet("/pagination", async ([AsParameters] PagingParametersVM pagingParameters, IGenericRepository repository) =>
@@ -131,7 +131,7 @@ namespace Server.API
                 }
 
                 return Results.NotFound("No students added");
-            });
+            }).RequireAuthorization();
 
             //Add New Student
             app.MapPost("/student/Add", async ([FromBody] AddUpdateStudentVM newStudent, IGenericRepository repository) =>
@@ -179,7 +179,7 @@ namespace Server.API
                 }
 
                 return Results.BadRequest("Failed to create the student");
-            });//.RequireAuthorization();
+            }).RequireAuthorization();
 
             // Update the Student Data
             app.MapPut("/student/Update/{rollNo}", async (int rollNo, AddUpdateStudentVM student, IGenericRepository repository) =>
@@ -220,7 +220,7 @@ namespace Server.API
 
 
                 return Results.NoContent();
-            });//.RequireAuthorization();
+            }).RequireAuthorization();
 
             // Delete Student by Roll No.
             app.MapDelete("/studentDelete/{rollNo}", async (int rollNo, IGenericRepository repository) =>
@@ -249,7 +249,7 @@ namespace Server.API
                 }
 
                 return Results.NotFound("No student found with this Roll No.");
-            });//.RequireAuthorization();
+            }).RequireAuthorization();
 
 
 
@@ -327,7 +327,7 @@ namespace Server.API
             var Claims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim("FirstName", user.FirstName),
+                new Claim("Name", user.FirstName),
                 new Claim("Email", user.Email),
                 new Claim("UserId", user.Id.ToString()),
             };
