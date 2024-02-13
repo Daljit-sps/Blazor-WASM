@@ -13,6 +13,8 @@
 
         public const string GetAllStudentsUrl = $"{ServerBaseUrl}/students";
 
+        public static string GetAllStudentsWithPaginationUrl(int PageIndex, int PageSize) => $"{ServerBaseUrl}/pagination/{PageIndex}{PageSize}";
+
         public const string AddStudentUrl = $"{ServerBaseUrl}/student/Add";
 
         public const string LoginUrl = $"{ServerBaseUrl}/login";

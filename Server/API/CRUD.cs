@@ -31,10 +31,16 @@ namespace Server.API
                 if (user != null)
                 {
                     var token = GenerateToken(user, _configuration);
-                    //return Results.Ok(new { Token = token });
-                    return Results.Ok(new LoginResultVM { Token = token });
+                    if(token != null)
+                    {
+                        return Results.Ok(new LoginResultVM { Token = token });
+                    }
+                    else
+                    {
+                        return Results.Unauthorized();
+                    }
                 }
-                return Results.Unauthorized();
+                return Results.NotFound("Invalid Credentials");
             });
 
 
@@ -311,6 +317,7 @@ namespace Server.API
                 user = new()
                 {
                     Id = currentUser.Id,
+                    RoleId = currentUser.RoleId,
                     FirstName = currentUser.FirstName,
                     LastName = currentUser.LastName,
                     Email = currentUser.Email,
@@ -327,6 +334,7 @@ namespace Server.API
             var Claims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim("Role", user.RoleId.ToString()),
                 new Claim("Name", user.FirstName),
                 new Claim("Email", user.Email),
                 new Claim("UserId", user.Id.ToString()),

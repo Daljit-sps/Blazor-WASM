@@ -1,4 +1,4 @@
-﻿@page "/student"
+﻿@page "/studentCRUD"
 @using Client.Components.Students
 @inject NavigationManager NavigationManager
 
@@ -48,15 +48,19 @@
                         <td>@student.Degree</td>
                         <td>@student.Batch</td>
                         <td>
-                            <button @onclick="() => NavigateToViewStudentDetails(student.RollNo)" class="btn btn-primary w-100 mb-2">
-                                View
-                            </button>
-                            <button @onclick="() => NavigateToAddEditUser(student.RollNo)" class="btn btn-warning w-100 mb-2">
-                                Update
-                            </button>
-                            <button @onclick="() => OpenDeleteModal(student)" class="btn btn-danger w-100 mb-2">
-                                Delete
-                            </button>
+
+                            <Tooltip Title="Details" role="button" @onclick="() => NavigateToViewStudentDetails(student.RollNo)">
+                                <Icon Name="IconName.InfoCircle"></Icon>
+                            </Tooltip>
+
+                            <Tooltip Title="Update" role="button" @onclick="() => NavigateToAddEditUser(student.RollNo)">
+                                <Icon Name="IconName.PencilSquare"></Icon>
+                            </Tooltip>
+
+                            <Tooltip Title="Delete" role="button" @onclick="() => OpenDeleteModal(student)">
+                                <Icon Name="IconName.TrashFill"></Icon>
+                            </Tooltip>
+                         
                         </td>
                     </tr>
 
@@ -65,6 +69,7 @@
            
         </tbody>
     </table>
+   
 </div>
 
 

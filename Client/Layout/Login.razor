@@ -1,15 +1,17 @@
-﻿@page "/"
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@page "/"
 
 @if (ShowAuthError)
 {
-    <div class="alert alert-danger" role="alert">
-        <p>@Error</p>
-    </div>
+    <Toasts class="p-3" Messages="messages" AutoHide="true" Delay="6000" Placement="ToastsPlacement.TopRight" />
 }
+
+
 <div class="row justify-content-center align-content-center mt-5">
     <div class="col-md-10 mt-5">
         <div class="card mx-4">
             <h3 class="card-header">Login</h3>
+           
             <div class="card-body">
                 <EditForm Model="userForAuthentication" OnValidSubmit="ExecuteLogin" class="bg-light mt-5">
                     <DataAnnotationsValidator />
@@ -55,14 +57,40 @@
     [Inject]
     public NavigationManager NavigationManager { get; set; }
 
+    [Inject]
+    protected AuthenticationStateProvider AuthenticationStateProvider { get; set; }
+
     [CascadingParameter]
     public Action<bool> ChangeMainLayout { get; set; }
 
     public bool ShowAuthError { get; set; }
+    public bool isAuthenticated { get; set; }
+
     public string Error { get; set; }
+
+    List<ToastMessage> messages = new List<ToastMessage>();
+
 
     private LoginVM userForAuthentication = new LoginVM();
 
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        isAuthenticated = user.Identity.IsAuthenticated;
+        if (isAuthenticated)
+        {
+            var hasRoleClaim = user.HasClaim(c => c.Type == "RoleId" && c.Value == "1");
+            if (hasRoleClaim)
+            {
+                NavigationManager.NavigateTo("/studentCRUD");
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/loggedStudent");
+            }
+        }
+    }
 
     public async Task ExecuteLogin()
     {
@@ -71,12 +99,30 @@
         if (result.Token == null)
         {
             ShowAuthError = true;
+            ShowMessage(ToastType.Danger);
         }
         else
         {
             ChangeMainLayout.Invoke(true);
-            NavigationManager.NavigateTo("/student");
+            //OnInitializedAsync();
+            NavigationManager.NavigateTo("/studentCRUD");
         }
     }
+
+    private void ShowMessage(ToastType toastType) => messages.Add(CreateToastMessage(toastType));
+
+    private ToastMessage CreateToastMessage(ToastType toastType)
+    {
+        var toastMessage = new ToastMessage();
+
+        toastMessage.Type = toastType;
+        toastMessage.Title = "Login Failed";
+        toastMessage.HelpText = $"{DateTime.Now}";
+        toastMessage.Message = "Invalid Credentials";
+        
+
+        return toastMessage;
+    }
+    
 }
 

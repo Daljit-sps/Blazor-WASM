@@ -1,6 +1,4 @@
 ﻿@page "/addedituser/{rollNo}"
-@using Client.Components.Students
-
 @if (_showingResponseModal)
 {
     <ModalResponse responseMessage="@Message" IsSuccess="@IsSuccess" OnClickButtonClose="(isClose)=> CloseResponseModal(isClose)"></ModalResponse>

@@ -30,10 +30,11 @@ namespace Client.AuthProviders
 
             var authResult = await _client.PostAsync(APIEndPoints.LoginUrl, bodyContent);
             var authContent = await authResult.Content.ReadAsStringAsync();
-            var result = JsonSerializer.Deserialize<LoginResultVM>(authContent, _options);
-
             if (!authResult.IsSuccessStatusCode)
-                return result;
+                return new LoginResultVM { Token = null }; ;
+
+
+            var result = JsonSerializer.Deserialize<LoginResultVM>(authContent, _options);
 
             await _localStorage.SetItemAsync("authToken", result.Token);
             ((AuthStateProvider)_authStateProvider).NotifyUserAuthentication(userForAuthentication.Email);

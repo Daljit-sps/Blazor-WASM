@@ -13,7 +13,7 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https:/
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddAuthorizationCore();
-//builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddBlazorBootstrap();
 builder.Services.AddScoped<AuthenticationStateProvider, AuthStateProvider>();
 
 await builder.Build().RunAsync();
