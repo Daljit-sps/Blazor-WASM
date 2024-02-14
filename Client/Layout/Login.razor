@@ -75,21 +75,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-        isAuthenticated = user.Identity.IsAuthenticated;
-        if (isAuthenticated)
-        {
-            var hasRoleClaim = user.HasClaim(c => c.Type == "RoleId" && c.Value == "1");
-            if (hasRoleClaim)
-            {
-                NavigationManager.NavigateTo("/studentCRUD");
-            }
-            else
-            {
-                NavigationManager.NavigateTo("/loggedStudent");
-            }
-        }
+        await CheckAuthentication();
     }
 
     public async Task ExecuteLogin()
@@ -104,11 +90,33 @@
         else
         {
             ChangeMainLayout.Invoke(true);
-            //OnInitializedAsync();
-            NavigationManager.NavigateTo("/studentCRUD");
+            await CheckAuthentication();
         }
     }
 
+
+    //check Role and Authentication of user
+    private async Task CheckAuthentication()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        isAuthenticated = user.Identity.IsAuthenticated;
+        if (isAuthenticated)
+        {
+            var hasRoleClaim = user.HasClaim(c => c.Type == "Role" && c.Value == "1");
+            if (hasRoleClaim)
+            {
+                NavigationManager.NavigateTo("/studentCRUD");
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/loggedStudent");
+            }
+        }
+    }
+
+
+    // show toast in case of Invalid login Credentials
     private void ShowMessage(ToastType toastType) => messages.Add(CreateToastMessage(toastType));
 
     private ToastMessage CreateToastMessage(ToastType toastType)
