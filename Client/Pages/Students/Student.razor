@@ -22,7 +22,40 @@
     </div>
 </div>
 
-<div class="table-responsive mx-4 px-2">
+<Grid TItem="GetStudentVM" class="table table-hover table-bordered table-striped mx-4 px-4" DataProvider="EmployeesDataProvider" AllowFiltering="true" AllowPaging="true" PageSize="5"  Responsive="true">
+    <GridColumn TItem="GetStudentVM" HeaderText="Roll No" PropertyName="RollNo" Filterable="false">
+        @context.RollNo
+    </GridColumn>
+    <GridColumn TItem="GetStudentVM" HeaderText="Full Name" PropertyName="FullName" FilterTextboxWidth="50">
+        @context.FullName
+    </GridColumn>
+    <GridColumn TItem="GetStudentVM" HeaderText="Email" PropertyName="Email" FilterTextboxWidth="50">
+        @context.Email
+    </GridColumn>
+    <GridColumn TItem="GetStudentVM" HeaderText="Degree" PropertyName="Degree" FilterTextboxWidth="80">
+        @context.Degree
+    </GridColumn>
+    <GridColumn TItem="GetStudentVM" HeaderText="Batch" PropertyName="Batch" Filterable="false">
+        @context.Batch
+    </GridColumn>
+    <GridColumn TItem="GetStudentVM" HeaderText="Actions" Filterable="false">
+        <Tooltip Title="Details" role="button" @onclick="() => NavigateToViewStudentDetails(context.RollNo)">
+            <Icon Name="IconName.InfoCircle"></Icon>
+        </Tooltip>
+
+        <Tooltip Title="Update" role="button" @onclick="() => NavigateToAddEditUser(context.RollNo)">
+            <Icon Name="IconName.PencilSquare"></Icon>
+        </Tooltip>
+
+        <Tooltip Title="Delete" role="button" @onclick="() => OpenDeleteModal(context)">
+            <Icon Name="IconName.TrashFill"></Icon>
+        </Tooltip>
+
+    </GridColumn>
+</Grid> 
+
+
+@* <div class="table-responsive mx-4 px-2">
     <table class="table table-bordered table-light table-striped">
         <thead>
             <tr>
@@ -70,7 +103,7 @@
         </tbody>
     </table>
    
-</div>
+</div>  *@
 
 
 @code{
@@ -84,11 +117,7 @@
 
     private GetStudentVM? _studentToDelete = null;
 
-    #pragma warning restore CS8616
-    protected override async Task OnInitializedAsync()
-    {
-        _students = await HttpClient.GetFromJsonAsync<List<GetStudentVM>?>(APIEndPoints.GetAllStudentsUrl);
-    }
+   
 
     private void NavigateToAddEditUser(int rollNo)
     {
@@ -101,7 +130,6 @@
         // Use navigation manager to navigate to the Details page
         NavigationManager.NavigateTo($"/studentDetails/{rollNo}");
     }
-
 
     private void OpenDeleteModal(GetStudentVM studentToDelete)
     {
@@ -119,5 +147,23 @@
         _studentToDelete = null;
         _showingDeleteModal = false;
     }
+
+    private async Task<GridDataProviderResult<GetStudentVM>> EmployeesDataProvider(GridDataProviderRequest<GetStudentVM> request)
+    {
+        _students = await HttpClient.GetFromJsonAsync<List<GetStudentVM>?>(APIEndPoints.GetAllStudentsUrl);
+        if (_students != null)
+        {
+            return await Task.FromResult(request.ApplyTo(_students));
+        }
+        else
+        {
+            return new GridDataProviderResult<GetStudentVM>
+                {
+                    Data = new List<GetStudentVM>(),
+                    TotalCount = 0
+                };
+        }
+    }
+
 }
 
